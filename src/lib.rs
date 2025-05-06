@@ -21,6 +21,13 @@ pub fn and(a: bool, b: bool) -> bool {
     nand(n, n)
 }
 
+/// OR   (A + B) = NAND(NOT A, NOT B)
+pub fn or(a: bool, b: bool) -> bool {
+    let na = nand(a, a);
+    let nb = nand(b, b);
+    nand(na, nb)
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -46,5 +53,13 @@ mod tests {
         assert_eq!(and(false, true),  false);
         assert_eq!(and(true,  false), false);
         assert_eq!(and(true,  true),  true);
+    }
+
+    #[test]
+    fn or_gate() {
+        assert_eq!(or(false, false), false);
+        assert_eq!(or(false, true),  true);
+        assert_eq!(or(true,  false), true);
+        assert_eq!(or(true,  true),  true);
     }
 }
