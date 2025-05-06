@@ -15,6 +15,12 @@ pub fn not(a: bool) -> bool {
     nand(a, a)
 }
 
+/// AND  (A · B) = NOT (NAND(A, B))
+pub fn and(a: bool, b: bool) -> bool {
+    let n = nand(a, b);
+    nand(n, n)
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -32,5 +38,13 @@ mod tests {
     fn not_gate() {
         assert_eq!(not(false), true);
         assert_eq!(not(true),  false);
+    }
+
+    #[test]
+    fn and_gate() {
+        assert_eq!(and(false, false), false);
+        assert_eq!(and(false, true),  false);
+        assert_eq!(and(true,  false), false);
+        assert_eq!(and(true,  true),  true);
     }
 }
