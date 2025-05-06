@@ -28,6 +28,13 @@ pub fn or(a: bool, b: bool) -> bool {
     nand(na, nb)
 }
 
+/// XOR  (A ⊕ B) = NAND(NAND(A, B), NAND(A, NAND(A, B)), NAND(B, NAND(A, B)))
+pub fn xor(a: bool, b: bool) -> bool {
+    let t1 = nand(a, b);
+    let t2 = nand(a, t1);
+    let t3 = nand(b, t1);
+    nand(t2, t3)
+}
 
 #[cfg(test)]
 mod tests {
@@ -61,5 +68,13 @@ mod tests {
         assert_eq!(or(false, true),  true);
         assert_eq!(or(true,  false), true);
         assert_eq!(or(true,  true),  true);
+    }
+
+    #[test]
+    fn xor_gate() {
+        assert_eq!(xor(false, false), false);
+        assert_eq!(xor(false, true),  true);
+        assert_eq!(xor(true,  false), true);
+        assert_eq!(xor(true,  true),  false);
     }
 }
