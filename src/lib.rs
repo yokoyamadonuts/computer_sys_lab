@@ -36,6 +36,24 @@ pub fn xor(a: bool, b: bool) -> bool {
     nand(t2, t3)
 }
 
+/// 2:1 マルチプレクサ  
+/// sel が 0 なら a、1 なら b を出力
+pub fn mux(sel: bool, a: bool, b: bool) -> bool {
+    let not_sel = not(sel);
+    let a_and_not_sel = and(a, not_sel);
+    let b_and_sel = and(b, sel);
+    or(a_and_not_sel, b_and_sel)
+}
+
+/// 1:2 デマルチプレクサ  
+/// 入力 d を sel=0→(d,0), sel=1→(0,d) へ分配
+pub fn demux(sel: bool, d: bool) -> (bool, bool) {
+    let not_sel = not(sel);
+    let o0 = and(d, not_sel);
+    let o1 = and(d, sel);
+    (o0, o1)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,5 +94,19 @@ mod tests {
         assert_eq!(xor(false, true),  true);
         assert_eq!(xor(true,  false), true);
         assert_eq!(xor(true,  true),  false);
+    }
+
+    #[test]
+    fn mux_gate() {
+        assert_eq!(mux(false, false, false), false);
+        assert_eq!(mux(false, false, true),  false);
+    }
+
+    #[test]
+    fn demux_gate() {
+        assert_eq!(demux(false, false), (false, false));
+        assert_eq!(demux(false, true),  (true, false));
+        assert_eq!(demux(true,  false), (false, false));
+        assert_eq!(demux(true,  true),  (false, true));
     }
 }
