@@ -54,6 +54,9 @@ pub fn demux(sel: bool, d: bool) -> (bool, bool) {
     (o0, o1)
 }
 
+// 加算器モジュールを追加
+pub mod adder;
+
 #[cfg(test)]
 mod tests {
     use super::*;
