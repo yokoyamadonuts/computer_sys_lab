@@ -59,6 +59,23 @@ pub fn n_bit_adder(a: &[bool], b: &[bool]) -> (Vec<bool>, bool) {
     (sum, carry)
 }
 
+/// インクリメンタ
+/// 
+/// nビット入力に1を加算する
+/// 
+/// * `a` - nビット入力（LSB→MSB順）
+/// 
+/// 戻り値は (result, overflow) のタプル
+/// - result: 加算結果（LSB→MSB順）
+/// - overflow: オーバーフロー発生フラグ（すべてのビットが1の場合にtrueになる）
+pub fn incrementer(a: &[bool]) -> (Vec<bool>, bool) {
+    // 加算する1をビット配列として表現: [true]（LSBのみ1）
+    let increment = [true];
+    
+    // n_bit_adderを利用して加算
+    n_bit_adder(a, &increment)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -113,6 +130,39 @@ mod tests {
         assert_eq!(
             n_bit_adder(&[true, false, true], &[true, true]),
             (vec![false, false, false], true)
+        );
+    }
+    
+    #[test]
+    fn test_incrementer() {
+        // 0 + 1 = 1
+        assert_eq!(
+            incrementer(&[false]),
+            (vec![true], false)
+        );
+        
+        // 1 + 1 = 2 (10 in binary)
+        assert_eq!(
+            incrementer(&[true]),
+            (vec![false], true)
+        );
+        
+        // 10 + 1 = 11 (3 in binary)
+        assert_eq!(
+            incrementer(&[false, true]),
+            (vec![true, true], false)
+        );
+        
+        // 11 + 1 = 100 (4 in binary)
+        assert_eq!(
+            incrementer(&[true, true]),
+            (vec![false, false], true)
+        );
+        
+        // 1111 + 1 = 10000 (16 in binary、オーバーフロー)
+        assert_eq!(
+            incrementer(&[true, true, true, true]),
+            (vec![false, false, false, false], true)
         );
     }
 } 
