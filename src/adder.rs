@@ -30,6 +30,35 @@ pub fn full_adder(a: bool, b: bool, carry_in: bool) -> (bool, bool) {
     (sum, carry_out)
 }
 
+/// nビット加算器
+/// 
+/// 2つのnビット入力（a, b）を受け取り、和（sum）と最終桁上げ（carry）を返す
+/// 
+/// * `a` - 1つ目のnビット入力（LSB→MSB順）
+/// * `b` - 2つ目のnビット入力（LSB→MSB順）
+/// 
+/// 戻り値は (sum, carry) のタプル
+/// - sum: nビットの和（LSB→MSB順）
+/// - carry: 最終桁上げ
+pub fn n_bit_adder(a: &[bool], b: &[bool]) -> (Vec<bool>, bool) {
+    // aとbの長さが異なる場合は、短い方を0で埋める
+    let n = a.len().max(b.len());
+    
+    let mut sum = Vec::with_capacity(n);
+    let mut carry = false;
+    
+    for i in 0..n {
+        let bit_a = if i < a.len() { a[i] } else { false };
+        let bit_b = if i < b.len() { b[i] } else { false };
+        
+        let (bit_sum, bit_carry) = full_adder(bit_a, bit_b, carry);
+        sum.push(bit_sum);
+        carry = bit_carry;
+    }
+    
+    (sum, carry)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -52,5 +81,38 @@ mod tests {
         assert_eq!(full_adder(true, false, true), (false, true));    // 1 + 0 + 1 = 0, carry 1
         assert_eq!(full_adder(true, true, false), (false, true));    // 1 + 1 + 0 = 0, carry 1
         assert_eq!(full_adder(true, true, true), (true, true));      // 1 + 1 + 1 = 1, carry 1
+    }
+    
+    #[test]
+    fn test_n_bit_adder() {
+        // 0 + 0 = 0
+        assert_eq!(
+            n_bit_adder(&[false, false], &[false, false]),
+            (vec![false, false], false)
+        );
+        
+        // 1 + 1 = 2 (10 in binary)
+        assert_eq!(
+            n_bit_adder(&[true], &[true]),
+            (vec![false], true)
+        );
+        
+        // 01 + 01 = 02 (10 in binary)
+        assert_eq!(
+            n_bit_adder(&[true, false], &[true, false]),
+            (vec![false, true], false)
+        );
+        
+        // 11 + 01 = 100 (4 in binary)
+        assert_eq!(
+            n_bit_adder(&[true, true], &[true, false]),
+            (vec![false, false], true)
+        );
+        
+        // 異なる長さの入力: 101 + 11 = 1000 (8 in binary)
+        assert_eq!(
+            n_bit_adder(&[true, false, true], &[true, true]),
+            (vec![false, false, false], true)
+        );
     }
 } 
