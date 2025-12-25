@@ -54,8 +54,11 @@ pub fn demux(sel: bool, d: bool) -> (bool, bool) {
     (o0, o1)
 }
 
-// 加算器モジュールを追加
+// 加算器モジュール
 pub mod adder;
+
+// ALUモジュール
+pub mod alu;
 
 #[cfg(test)]
 mod tests {

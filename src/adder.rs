@@ -165,4 +165,23 @@ mod tests {
             (vec![false, false, false, false], true)
         );
     }
+    
+    #[test]
+    fn test_specific_additions() {
+        // 15 + 3 = 18 のテスト
+        let x = vec![true, true, true, true];  // 15（0b1111）
+        let y = vec![true, true];              // 3（0b11）
+        
+        println!("Adding x: {:?} and y: {:?}", x, y);
+        
+        let (sum, carry) = n_bit_adder(&x, &y);
+        
+        println!("Sum: {:?}, Carry: {}", sum, carry);
+        
+        // 15 + 3 = 18（0b10010）
+        // この場合、4ビットで表現すると「0010」（上位ビットの桁上がりはcarryに入る）
+        // なので、sum = [0, 1, 0, 0], carry = true が期待値
+        assert_eq!(sum, vec![false, true, false, false]);
+        assert_eq!(carry, true);
+    }
 } 
